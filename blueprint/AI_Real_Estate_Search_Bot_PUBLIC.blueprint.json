@@ -1,5 +1,5 @@
 {
-  "name": "Integration Telegram Bot, Airtable — PUBLIC PORTFOLIO VERSION",
+  "name": "AI Real Estate Search Bot - PUBLIC SANITIZED BLUEPRINT",
   "flow": [
     {
       "id": 3,
@@ -30,19 +30,19 @@
       "parameters": {"__IMTCONN__": 0},
       "mapper": {
         "model": "gpt-4o-mini",
-        "top_p": "1",
         "select": "chat",
+        "temperature": "1",
+        "top_p": "1",
+        "max_tokens": "2048",
+        "n_completions": "1",
+        "response_format": "text",
         "messages": [
           {
             "role": "system",
-            "content": "You are a real estate search assistant for Kyiv, Ukraine. Manage a strict stateful conversation. Step 0 asks for rooms and returns next_step=1. Step 1 extracts rooms, asks for maximum budget, and returns next_step=2. Step 2 normalizes the budget, asks for minimum floor, and returns next_step=3. Step 3 interprets the answer as floor, returns next_step=4, status=searching, ready_to_search=true, and replies that the search has started. Preserve previously collected values, never return null, and respond with one valid JSON object containing rooms, budget_max, floor_min, next_step, status, reply, and ready_to_search."
+            "content": "You are a real estate search assistant for Kyiv, Ukraine. Manage a strict stateful conversation using the current Airtable values: step, rooms, budget_max and floor_min. Step 0 asks for rooms and returns next_step=1, status=collecting. Step 1 extracts rooms, asks for maximum budget and returns next_step=2. Step 2 normalizes the budget, asks for minimum floor and returns next_step=3. Step 3 interprets the answer as floor, returns next_step=4, status=searching, ready_to_search=true and replies that the search has started. Preserve existing values, never return null and respond with one valid JSON object containing rooms, budget_max, floor_min, next_step, status, reply and ready_to_search."
           },
           {"role": "user", "content": "{{3.message.text}}", "imageDetail": "auto"}
-        ],
-        "max_tokens": "2048",
-        "temperature": "1",
-        "n_completions": "1",
-        "response_format": "text"
+        ]
       },
       "metadata": {"designer": {"x": 600, "y": 0}}
     },
@@ -62,18 +62,18 @@
       "mapper": {
         "base": "YOUR_AIRTABLE_BASE_ID",
         "table": "YOUR_AIRTABLE_TABLE_ID",
-        "record": {
-          "YOUR_FIELD_ID_LAST_ATTACHMENT": "{{8.reply}}",
-          "YOUR_FIELD_ID_STATUS": "{{8.status}}",
-          "YOUR_FIELD_ID_BUDGET_MAX": "{{8.budget_max}}",
-          "YOUR_FIELD_ID_CHAT_ID": "{{3.message.chat.id}}",
-          "YOUR_FIELD_ID_ROOMS": "{{8.rooms}}",
-          "YOUR_FIELD_ID_FLOOR_MIN": "{{8.floor_min}}",
-          "YOUR_FIELD_ID_STEP": "{{8.next_step}}"
-        },
         "recordId": "{{4.id}}",
         "typecast": false,
-        "useColumnId": false
+        "useColumnId": false,
+        "record": {
+          "YOUR_FIELD_CHAT_ID": "{{3.message.chat.id}}",
+          "YOUR_FIELD_STEP": "{{8.next_step}}",
+          "YOUR_FIELD_ROOMS": "{{8.rooms}}",
+          "YOUR_FIELD_BUDGET_MAX": "{{8.budget_max}}",
+          "YOUR_FIELD_FLOOR_MIN": "{{8.floor_min}}",
+          "YOUR_FIELD_STATUS": "{{8.status}}",
+          "YOUR_FIELD_LAST_ATTACHMENT": "{{8.reply}}"
+        }
       },
       "metadata": {"designer": {"x": 1200, "y": 0}}
     },
@@ -83,8 +83,8 @@
       "version": 1,
       "parameters": {"__IMTCONN__": 0},
       "mapper": {
-        "text": "{{9.Last_attachment}}",
         "chatId": "{{3.message.chat.id}}",
+        "text": "{{9.Last_attachment}}",
         "parseMode": "",
         "replyMarkup": "",
         "messageThreadId": "",
@@ -97,21 +97,21 @@
       "id": 11,
       "module": "http:MakeRequest",
       "version": 4,
-      "parameters": {"tlsType": "", "authenticationType": "noAuth"},
+      "parameters": {"authenticationType": "noAuth", "tlsType": ""},
       "filter": {
-        "name": "Searching stage",
+        "name": "Search only when all criteria are ready",
         "conditions": [[
-          {"a": "{{9.Status}}", "o": "text:equal", "b": "collecting"},
+          {"a": "{{9.Status}}", "o": "text:equal", "b": "searching"},
           {"a": "{{8.ready_to_search}}", "o": "text:equal", "b": "true"}
         ]]
       },
       "mapper": {
         "url": "https://developers.ria.com/dom/search?api_key=YOUR_DOM_RIA_API_KEY&category=1&realty_type=2&operation=1&state_id=10&city_id=10&characteristic[209][from]={{9.rooms}}&characteristic[209][to]={{9.rooms}}&characteristic[227][from]={{9.floor_min}}&price_to={{9.budget_max}}&price_cur=1&secondary=1&page=0",
         "method": "get",
-        "shareCookies": false,
         "parseResponse": true,
         "allowRedirects": true,
         "stopOnHttpError": true,
+        "shareCookies": false,
         "requestCompressedContent": true
       },
       "metadata": {"designer": {"x": 1800, "y": 0}}
@@ -121,6 +121,7 @@
       "module": "builtin:BasicRouter",
       "version": 1,
       "mapper": null,
+      "metadata": {"designer": {"x": 2100, "y": 0}},
       "routes": [
         {
           "flow": [
@@ -129,10 +130,15 @@
               "module": "telegram:SendReplyMessage",
               "version": 1,
               "parameters": {"__IMTCONN__": 0},
-              "filter": {"name": "no fit", "conditions": [[{"a": "", "b": "0", "o": "number:equal"}]]},
+              "filter": {
+                "name": "No matching properties",
+                "conditions": [[
+                  {"a": "{{length(11.data.items)}}", "o": "number:equal", "b": "0"}
+                ]]
+              },
               "mapper": {
+                "chatId": "{{3.message.chat.id}}",
                 "text": "За вашим запитом нічого не знайдено, спробуйте ще раз",
-                "chatId": "{{10.chat.id}}",
                 "parseMode": "",
                 "replyMarkup": "",
                 "messageThreadId": "",
@@ -149,16 +155,16 @@
               "mapper": {
                 "base": "YOUR_AIRTABLE_BASE_ID",
                 "table": "YOUR_AIRTABLE_TABLE_ID",
-                "record": {
-                  "YOUR_FIELD_ID_STATUS": "error",
-                  "YOUR_FIELD_ID_BUDGET_MAX": "0",
-                  "YOUR_FIELD_ID_ROOMS": "0",
-                  "YOUR_FIELD_ID_FLOOR_MIN": "0",
-                  "YOUR_FIELD_ID_STEP": "0"
-                },
                 "recordId": "{{9.id}}",
                 "typecast": false,
-                "useColumnId": false
+                "useColumnId": false,
+                "record": {
+                  "YOUR_FIELD_STATUS": "error",
+                  "YOUR_FIELD_STEP": "0",
+                  "YOUR_FIELD_ROOMS": "0",
+                  "YOUR_FIELD_BUDGET_MAX": "0",
+                  "YOUR_FIELD_FLOOR_MIN": "0"
+                }
               },
               "metadata": {"designer": {"x": 2700, "y": -150}}
             }
@@ -171,6 +177,12 @@
               "module": "builtin:BasicFeeder",
               "version": 1,
               "parameters": {},
+              "filter": {
+                "name": "Properties found",
+                "conditions": [[
+                  {"a": "{{length(11.data.items)}}", "o": "number:greater", "b": "0"}
+                ]]
+              },
               "mapper": {"array": "{{11.data.items}}"},
               "metadata": {"designer": {"x": 2400, "y": 150}}
             },
@@ -178,15 +190,20 @@
               "id": 16,
               "module": "http:MakeRequest",
               "version": 4,
-              "parameters": {"tlsType": "", "authenticationType": "noAuth"},
-              "filter": {"name": "", "conditions": [[{"a": "{{14.`__IMTINDEX__`}}", "b": "4", "o": "number:less"}]]},
+              "parameters": {"authenticationType": "noAuth", "tlsType": ""},
+              "filter": {
+                "name": "Limit detailed results",
+                "conditions": [[
+                  {"a": "{{14.__IMTINDEX__}}", "o": "number:less", "b": "4"}
+                ]]
+              },
               "mapper": {
                 "url": "https://developers.ria.com/dom/info/{{14.value}}?api_key=YOUR_DOM_RIA_API_KEY",
                 "method": "get",
-                "shareCookies": false,
                 "parseResponse": true,
                 "allowRedirects": true,
                 "stopOnHttpError": true,
+                "shareCookies": false,
                 "requestCompressedContent": true
               },
               "metadata": {"designer": {"x": 2700, "y": 150}}
@@ -206,16 +223,16 @@
               "parameters": {"__IMTCONN__": 0},
               "mapper": {
                 "model": "gpt-4o",
-                "top_p": "1",
                 "select": "chat",
+                "temperature": "1",
+                "top_p": "1",
+                "max_tokens": "2048",
+                "n_completions": "1",
+                "response_format": "text",
                 "messages": [{
                   "role": "system",
-                  "content": "Format Kyiv apartment results as a concise Ukrainian Telegram message. Use only rooms_count, total_square_meters, street_name_uk, admin_district_name_uk, floor_info, price_total, currency_type_uk, and beautiful_url. Do not invent values. Separate listings with ---. Properties: {{17.array[].data}}"
-                }],
-                "max_tokens": "2048",
-                "temperature": "1",
-                "n_completions": "1",
-                "response_format": "text"
+                  "content": "Format Kyiv apartment results as a concise Ukrainian Telegram message. Use only rooms_count, total_square_meters, street_name_uk, admin_district_name_uk, floor_info, price_total, currency_type_uk and beautiful_url. Do not invent values. Separate listings with ---. Properties: {{17.array[].data}}"
+                }]
               },
               "metadata": {"designer": {"x": 3300, "y": 150}}
             },
@@ -225,8 +242,8 @@
               "version": 1,
               "parameters": {"__IMTCONN__": 0},
               "mapper": {
+                "chatId": "{{3.message.chat.id}}",
                 "text": "{{19.result}}",
-                "chatId": "{{10.chat.id}}",
                 "parseMode": "",
                 "replyMarkup": "",
                 "messageThreadId": "",
@@ -244,22 +261,21 @@
                 "id": "{{9.id}}",
                 "base": "YOUR_AIRTABLE_BASE_ID",
                 "table": "YOUR_AIRTABLE_TABLE_ID",
-                "record": {
-                  "YOUR_FIELD_ID_STATUS": "Done",
-                  "YOUR_FIELD_ID_BUDGET_MAX": "0",
-                  "YOUR_FIELD_ID_ROOMS": "0",
-                  "YOUR_FIELD_ID_FLOOR_MIN": "0",
-                  "YOUR_FIELD_ID_STEP": "0"
-                },
                 "typecast": false,
-                "useColumnId": false
+                "useColumnId": false,
+                "record": {
+                  "YOUR_FIELD_STATUS": "done",
+                  "YOUR_FIELD_STEP": "0",
+                  "YOUR_FIELD_ROOMS": "0",
+                  "YOUR_FIELD_BUDGET_MAX": "0",
+                  "YOUR_FIELD_FLOOR_MIN": "0"
+                }
               },
               "metadata": {"designer": {"x": 3900, "y": 150}}
             }
           ]
         }
-      ],
-      "metadata": {"designer": {"x": 2100, "y": 0}}
+      ]
     }
   ],
   "metadata": {
@@ -280,6 +296,6 @@
     "designer": {"orphans": []},
     "zone": "eu1.make.com",
     "notes": [],
-    "public_note": "Sanitized public portfolio version. Credentials, connection IDs, webhook IDs, Airtable IDs, field IDs, and API keys were removed or replaced."
+    "public_note": "Sanitized public portfolio version. Credentials, connection IDs, webhook IDs, Airtable IDs, field IDs, API keys and user data were removed or replaced. Search and branch filters were corrected for the public template."
   }
 }

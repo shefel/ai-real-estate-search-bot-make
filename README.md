@@ -1,32 +1,48 @@
-# AI Real Estate Search Bot — Make.com Automation
+# AI Real Estate Search Bot - Make.com Automation
 
 A stateful AI-powered Telegram bot that collects apartment search criteria, preserves conversation state, queries the DOM.RIA API, and returns formatted property listings.
 
-> Built as a practical AI Automation training project. I configured, tested, and debugged the conversation state logic, Airtable persistence, OpenAI prompts, API requests, routing, iteration, aggregation, and Telegram delivery.
+> Built as a practical AI Automation training project. I configured, tested, and debugged the conversation logic, Airtable persistence, OpenAI prompts, API requests, routing, iteration, aggregation, and Telegram delivery.
 
-## Architecture
+## Actual workflow architecture
 
-### Conversation and state management
+This is one Make.com scenario with two logical stages and two branches after the Router.
 
-`Telegram → Airtable → OpenAI → JSON Parser → Airtable → Telegram`
+### 1. Conversation and state management
 
-- Receives a Telegram message
-- Retrieves the user's saved state from Airtable
-- Extracts and normalizes rooms, budget, and minimum floor
-- Parses structured model output
-- Persists the next conversation step
-- Sends the next question or starts the search stage
+`Telegram Watch Updates -> Airtable Search Records -> OpenAI -> JSON Parse -> Airtable Update Record -> Telegram Reply`
 
-### Property search and result processing
+- Telegram receives each new user message.
+- Airtable loads the saved state: `step`, `rooms`, `budget_max`, `floor_min`, and `status`.
+- The first OpenAI module interprets the answer for the current step and returns structured JSON.
+- JSON Parse converts that response into fields Make can map.
+- Airtable saves the updated state.
+- Telegram sends the next question or confirms that the search has started.
 
-`DOM.RIA API → Router → Iterator → HTTP details → Aggregator → OpenAI → Telegram → Airtable`
+The first OpenAI module does **not** generate a separate search query. It manages the stateful conversation and extracts the value expected at the current step.
 
-- Searches listings using the collected criteria
-- Handles successful and empty-result branches
-- Retrieves detailed data for selected listings
-- Aggregates API responses
-- Formats a concise Ukrainian Telegram response
-- Resets or updates the stored state
+### 2. Property search and result processing
+
+`DOM.RIA Search HTTP -> Router`
+
+The search runs only when:
+
+`status = searching AND ready_to_search = true`
+
+#### Empty-result branch
+
+`Telegram notice -> Airtable reset`
+
+#### Successful-result branch
+
+`Iterator -> HTTP listing details -> Array Aggregator -> OpenAI formatter -> Telegram -> Airtable reset`
+
+- The Iterator processes selected listing IDs.
+- The second HTTP module retrieves detailed property data.
+- Array Aggregator combines the listing responses.
+- The second OpenAI module formats the aggregated data into a concise Ukrainian Telegram message.
+- Telegram sends the final listings.
+- Airtable resets or updates the conversation state.
 
 ## Tech stack
 
@@ -36,23 +52,23 @@ A stateful AI-powered Telegram bot that collects apartment search criteria, pres
 - OpenAI API
 - DOM.RIA API
 - HTTP and JSON
-- Routers, iterators, filters, and aggregators
+- Router, Iterator, filters, and Array Aggregator
 
 ## Workflow preview
 
-![Make.com workflow topology](screenshots/make-workflow-topology.svg)
+![Corrected Make.com workflow topology](screenshots/make-workflow-topology-corrected.svg)
 
-## LinkedIn carousel
+## Corrected LinkedIn carousel
 
-The presentation-ready PDF carousel is published together with the LinkedIn project post. The repository focuses on the technical architecture and sanitized workflow export.
+The corrected presentation-ready PDF is attached to the LinkedIn project post.
 
 ## Public blueprint
 
-A sanitized portfolio version of the Make.com workflow is available here:
-
 [`blueprint/AI_Real_Estate_Search_Bot_PUBLIC.blueprint.json`](blueprint/AI_Real_Estate_Search_Bot_PUBLIC.blueprint.json)
 
-It preserves the module topology, routing, mappings, state variables, filters, and prompt-driven logic while replacing credentials and private workspace identifiers with placeholders. Before using it, configure your own:
+The public blueprint preserves the real module order, branches, mappings, prompts, state variables, and corrected filters while replacing credentials and private workspace identifiers with placeholders.
+
+Before importing it, configure your own:
 
 - Telegram webhook and connection
 - Airtable connection, base, table, and field mappings
@@ -64,16 +80,17 @@ It preserves the module topology, routing, mappings, state variables, filters, a
 - Preventing repeated conversation steps
 - Preventing searches before all required fields were collected
 - Distinguishing floor answers from room-count answers
-- Synchronizing model output with Airtable state
+- Synchronizing OpenAI output with Airtable state
+- Correctly gating the search with `status = searching` and `ready_to_search = true`
 - Routing empty and successful API responses
 - Limiting, retrieving, and aggregating property details
 - Formatting consistent Telegram-ready output
 
 ## Security
 
-The repository intentionally excludes live credentials, bot tokens, webhook identifiers, connection IDs, private Airtable IDs, and user data. Never commit the original production blueprint or `.env` files.
+This repository excludes live credentials, bot tokens, webhook identifiers, Make connection IDs, private Airtable IDs, and user data. Never commit the original production blueprint or secret files.
 
 ## Author
 
-**Dmytro Shefel** — AI Automation Engineer  
+**Dmytro Shefel** - AI Automation Engineer  
 [LinkedIn](https://www.linkedin.com/in/dmytro-shefel-3858b3361/)

@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="760" viewBox="0 0 1600 760">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fbfaff"/><stop offset="1" stop-color="#f1ebff"/></linearGradient>
+    <filter id="shadow"><feDropShadow dx="0" dy="6" stdDeviation="8" flood-opacity="0.12"/></filter>
+    <style>
+      .title{font:700 42px Arial,sans-serif;fill:#22153f}.sub{font:400 22px Arial,sans-serif;fill:#665b78}.label{font:700 18px Arial,sans-serif;fill:#241943}.small{font:400 14px Arial,sans-serif;fill:#665b78}.node{filter:url(#shadow)}.arrow{stroke:#8b35ef;stroke-width:5;stroke-dasharray:8 10;fill:none;marker-end:url(#head)}
+    </style>
+    <marker id="head" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#8b35ef"/></marker>
+  </defs>
+  <rect width="1600" height="760" rx="28" fill="url(#bg)"/>
+  <text x="70" y="76" class="title">AI Real Estate Search Bot — Make.com Workflow</text>
+  <text x="70" y="112" class="sub">Stateful conversation, API search, routing, aggregation, and Telegram delivery</text>
+  <rect x="60" y="150" width="1480" height="220" rx="26" fill="#fff" stroke="#ded2f4"/>
+  <text x="90" y="190" class="label">1. Conversation &amp; State Management</text>
+  <path class="arrow" d="M190 275 H310 M410 275 H530 M630 275 H750 M850 275 H970 M1070 275 H1190"/>
+  <g class="node"><circle cx="140" cy="275" r="48" fill="#229ed9"/><text x="140" y="282" text-anchor="middle" font-size="30" fill="#fff">✈</text><text x="140" y="345" text-anchor="middle" class="label">Telegram</text><text x="140" y="365" text-anchor="middle" class="small">Watch updates</text></g>
+  <g class="node"><circle cx="360" cy="275" r="48" fill="#18bfff"/><text x="360" y="283" text-anchor="middle" font-size="28" fill="#fff">▦</text><text x="360" y="345" text-anchor="middle" class="label">Airtable</text><text x="360" y="365" text-anchor="middle" class="small">Load state</text></g>
+  <g class="node"><circle cx="580" cy="275" r="48" fill="#16a56b"/><text x="580" y="283" text-anchor="middle" font-size="26" fill="#fff">AI</text><text x="580" y="345" text-anchor="middle" class="label">OpenAI</text><text x="580" y="365" text-anchor="middle" class="small">Extract criteria</text></g>
+  <g class="node"><circle cx="800" cy="275" r="48" fill="#a982eb"/><text x="800" y="283" text-anchor="middle" font-size="28" fill="#fff">{ }</text><text x="800" y="345" text-anchor="middle" class="label">JSON</text><text x="800" y="365" text-anchor="middle" class="small">Parse output</text></g>
+  <g class="node"><circle cx="1020" cy="275" r="48" fill="#18bfff"/><text x="1020" y="283" text-anchor="middle" font-size="28" fill="#fff">▦</text><text x="1020" y="345" text-anchor="middle" class="label">Airtable</text><text x="1020" y="365" text-anchor="middle" class="small">Save state</text></g>
+  <g class="node"><circle cx="1240" cy="275" r="48" fill="#229ed9"/><text x="1240" y="282" text-anchor="middle" font-size="30" fill="#fff">✈</text><text x="1240" y="345" text-anchor="middle" class="label">Telegram</text><text x="1240" y="365" text-anchor="middle" class="small">Send reply</text></g>
+  <rect x="60" y="410" width="1480" height="285" rx="26" fill="#fff" stroke="#ded2f4"/>
+  <text x="90" y="450" class="label">2. Property Search &amp; Result Processing</text>
+  <path class="arrow" d="M180 555 H280 M380 555 H480 M580 555 H680 M780 555 H880 M980 555 H1080 M1180 555 H1280"/>
+  <g class="node"><circle cx="130" cy="555" r="45" fill="#0d7eea"/><text x="130" y="563" text-anchor="middle" font-size="28" fill="#fff">◎</text><text x="130" y="625" text-anchor="middle" class="label">HTTP API</text><text x="130" y="645" text-anchor="middle" class="small">DOM.RIA search</text></g>
+  <g class="node"><circle cx="330" cy="555" r="45" fill="#83ca4f"/><text x="330" y="563" text-anchor="middle" font-size="26" fill="#fff">⑂</text><text x="330" y="625" text-anchor="middle" class="label">Router</text><text x="330" y="645" text-anchor="middle" class="small">Branch results</text></g>
+  <g class="node"><circle cx="530" cy="555" r="45" fill="#83ca4f"/><text x="530" y="563" text-anchor="middle" font-size="25" fill="#fff">≡</text><text x="530" y="625" text-anchor="middle" class="label">Iterator</text><text x="530" y="645" text-anchor="middle" class="small">Loop listings</text></g>
+  <g class="node"><circle cx="730" cy="555" r="45" fill="#83ca4f"/><text x="730" y="563" text-anchor="middle" font-size="24" fill="#fff">Σ</text><text x="730" y="625" text-anchor="middle" class="label">Aggregator</text><text x="730" y="645" text-anchor="middle" class="small">Combine data</text></g>
+  <g class="node"><circle cx="930" cy="555" r="45" fill="#16a56b"/><text x="930" y="563" text-anchor="middle" font-size="25" fill="#fff">AI</text><text x="930" y="625" text-anchor="middle" class="label">OpenAI</text><text x="930" y="645" text-anchor="middle" class="small">Format listings</text></g>
+  <g class="node"><circle cx="1130" cy="555" r="45" fill="#229ed9"/><text x="1130" y="562" text-anchor="middle" font-size="28" fill="#fff">✈</text><text x="1130" y="625" text-anchor="middle" class="label">Telegram</text><text x="1130" y="645" text-anchor="middle" class="small">Deliver results</text></g>
+  <g class="node"><circle cx="1330" cy="555" r="45" fill="#18bfff"/><text x="1330" y="563" text-anchor="middle" font-size="28" fill="#fff">▦</text><text x="1330" y="625" text-anchor="middle" class="label">Airtable</text><text x="1330" y="645" text-anchor="middle" class="small">Reset state</text></g>
+</svg>

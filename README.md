@@ -40,19 +40,19 @@ A stateful AI-powered Telegram bot that collects apartment search criteria, pres
 
 ## Workflow preview
 
-![Make.com workflow topology](screenshots/make-workflow-topology.png)
+![Make.com workflow topology](screenshots/make-workflow-topology.svg)
 
-## Portfolio carousel
+## LinkedIn carousel
 
-The full project breakdown is available in [`docs/AI_Real_Estate_Search_Bot_LinkedIn_Carousel.pdf`](docs/AI_Real_Estate_Search_Bot_LinkedIn_Carousel.pdf).
+The presentation-ready PDF carousel is published together with the LinkedIn project post. The repository focuses on the technical architecture and sanitized workflow export.
 
 ## Public blueprint
 
-A sanitized Make.com export is available here:
+A sanitized portfolio version of the Make.com workflow is available here:
 
 [`blueprint/AI_Real_Estate_Search_Bot_PUBLIC.blueprint.json`](blueprint/AI_Real_Estate_Search_Bot_PUBLIC.blueprint.json)
 
-The public file contains placeholders instead of credentials and private workspace identifiers. Before importing it, configure your own:
+It preserves the module topology, routing, mappings, state variables, filters, and prompt-driven logic while replacing credentials and private workspace identifiers with placeholders. Before using it, configure your own:
 
 - Telegram webhook and connection
 - Airtable connection, base, table, and field mappings

@@ -54,9 +54,20 @@ The search runs only when:
 - HTTP and JSON
 - Router, Iterator, filters, and Array Aggregator
 
-## Workflow preview
+## Actual Make.com scenario
 
-![Corrected Make.com workflow topology](screenshots/make-workflow-topology-corrected.svg)
+The image below is a real screenshot of the scenario assembled and tested in Make.com.
+
+[![Actual Make.com workflow screenshot](screenshots/make-workflow-actual.svg)](screenshots/make-workflow-actual.svg)
+
+_Click the image to open the full-size workflow screenshot._
+
+<details>
+<summary>Open the simplified architecture diagram</summary>
+
+![Simplified Make.com workflow topology](screenshots/make-workflow-topology-corrected.svg)
+
+</details>
 
 ## Corrected LinkedIn carousel
 

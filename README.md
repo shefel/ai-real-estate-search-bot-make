@@ -58,7 +58,7 @@ The search runs only when:
 
 The image below is a real screenshot of the scenario assembled and tested in Make.com.
 
-[![Actual Make.com workflow screenshot](screenshots/make-workflow-actual.svg)](screenshots/make-workflow-actual.svg)
+[![Actual Make.com workflow screenshot](screenshots/make-workflow-actual.webp)](screenshots/make-workflow-actual.webp)
 
 _Click the image to open the full-size workflow screenshot._
 
